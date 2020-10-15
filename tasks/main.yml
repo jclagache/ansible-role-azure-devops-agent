@@ -51,7 +51,7 @@
   register: svc_status
   changed_when: false
   check_mode: no
-  when: svc_sh.stat.exists
+  when: svc_sh.stat.exists and ansible_service_mgr == "systemd"
 
 - name: Set agent config facts
   set_fact:
@@ -113,6 +113,7 @@
   when:
     - service_is_installed
     - reconfigure_or_replace
+    - ansible_service_mgr == "systemd"
 
 - name: Unconfigure agent
   command: "{{ (unconfigure_agent_cmd_args }}"
@@ -182,6 +183,7 @@
     chdir: "{{ az_devops_agent_folder }}"
   when:
     - (not service_is_installed) or reconfigure_or_replace
+    - ansible_service_mgr == "systemd"
 
 - name: Start agent service
   command: ./svc.sh start
@@ -190,3 +192,4 @@
     chdir: "{{ az_devops_agent_folder }}"
   when:
     - (not service_is_running) or reconfigure_or_replace
+    - ansible_service_mgr == "systemd"
