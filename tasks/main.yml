@@ -32,6 +32,7 @@
   retries: 2
   register: dep_install
   until: dep_install is succeeded
+  ignore_errors: ansible_distribution in ['RedHat','CentOS'] and ansible_distribution_major_version == '6'
   changed_when:
     - dep_install.stdout is regex("[1-9]\d* upgraded|[1-9]\d* newly installed")
 
@@ -54,6 +55,11 @@
 
 - name: Set agent config facts
   set_fact:
+    unconfigure_agent_cmd_args:
+      - "./config.sh"
+      - "remove"
+      - "--auth PAT"
+      - "--token '{{ az_devops_accesstoken }}'"
     agent_cmd_args:
       - "./config.sh"
       - "--unattended"
@@ -91,6 +97,13 @@
   when: 
     - az_devops_proxy_url is defined
 
+- name: set LD_LIBRARY_PATH 
+  set_fact:
+    agent_cmd_args: "LD_LIBRARY_PATH=/usr/local/lib {{ agent_cmd_args }}"
+    unconfigure_agent_cmd_args: "LD_LIBRARY_PATH=/usr/local/lib {{ unconfigure_agent_cmd_args }}"
+  when: 
+    - ansible_distribution in ['RedHat','CentOS'] and ansible_distribution_major_version == '6'
+
 - name: Uninstall agent service
   command: ./svc.sh uninstall
   become: true
@@ -102,7 +115,7 @@
     - reconfigure_or_replace
 
 - name: Unconfigure agent
-  command: "./config.sh remove --auth PAT --token {{ az_devops_accesstoken }}"
+  command: "{{ (unconfigure_agent_cmd_args }}"
   args:
     chdir: "{{ az_devops_agent_folder }}"
     removes: "{{ az_devops_agent_folder }}/.agent"
