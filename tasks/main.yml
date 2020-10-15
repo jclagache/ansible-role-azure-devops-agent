@@ -99,8 +99,8 @@
 
 - name: set LD_LIBRARY_PATH 
   set_fact:
-    agent_cmd_args: "LD_LIBRARY_PATH=/usr/local/lib {{ agent_cmd_args }}"
-    unconfigure_agent_cmd_args: "LD_LIBRARY_PATH=/usr/local/lib {{ unconfigure_agent_cmd_args }}"
+    agent_cmd_args: "['LD_LIBRARY_PATH=/usr/local/lib'] + {{ agent_cmd_args }}"
+    unconfigure_agent_cmd_args: "['LD_LIBRARY_PATH=/usr/local/lib'] + {{ unconfigure_agent_cmd_args }}"
   when: 
     - ansible_distribution in ['RedHat','CentOS'] and ansible_distribution_major_version == '6'
 
