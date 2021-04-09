@@ -32,7 +32,7 @@
   retries: 2
   register: dep_install
   until: dep_install is succeeded
-  ignore_errors: ansible_distribution in ['RedHat','CentOS'] and ansible_distribution_major_version == '6'
+  ignore_errors: "{{ ansible_distribution in ['RedHat','CentOS'] and ansible_distribution_major_version == '6' ? true : false }}"
   changed_when:
     - dep_install.stdout is regex("[1-9]\d* upgraded|[1-9]\d* newly installed")
 
