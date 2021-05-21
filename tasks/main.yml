@@ -116,7 +116,7 @@
     - ansible_service_mgr == "systemd"
 
 - name: Unconfigure agent
-  command: "{{ (unconfigure_agent_cmd_args }}"
+  command: "{{ unconfigure_agent_cmd_args }}"
   args:
     chdir: "{{ az_devops_agent_folder }}"
     removes: "{{ az_devops_agent_folder }}/.agent"
