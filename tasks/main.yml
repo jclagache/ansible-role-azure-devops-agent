@@ -122,7 +122,7 @@
     removes: "{{ az_devops_agent_folder }}/.agent"
   become: true
   become_user: "{{ az_devops_agent_user }}"
-  environment: "{{ override_env }}"
+  environment: "{{ override_env | default({}) }}"
   when:
     - service_is_installed
     - reconfigure_or_replace
@@ -142,7 +142,7 @@
     creates: "{{ az_devops_agent_folder }}/.agent"
   become: true
   become_user: "{{ az_devops_agent_user }}"
-  environment: "{{ override_env }}"
+  environment: "{{ override_env | default({}) }}"
   when:
     - az_devops_agent_role == 'build'
     - (not service_is_installed) or reconfigure_or_replace
@@ -154,7 +154,7 @@
     creates: "{{ az_devops_agent_folder }}/.agent"
   become: true
   become_user: "{{ az_devops_agent_user }}"
-  environment: "{{ override_env }}"
+  environment: "{{ override_env | default({}) }}"
   when:
     - az_devops_agent_role == 'deployment'
     - (not service_is_installed) or reconfigure_or_replace
@@ -166,7 +166,7 @@
     creates: "{{ az_devops_agent_folder }}/.agent"
   become: true
   become_user: "{{ az_devops_agent_user }}"
-  environment: "{{ override_env }}"
+  environment: "{{ override_env | default({}) }}"
   when:
     - az_devops_agent_role == 'resource'
     - (not service_is_installed) or reconfigure_or_replace
