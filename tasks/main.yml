@@ -99,8 +99,8 @@
 
 - name: set LD_LIBRARY_PATH 
   set_fact:
-    agent_cmd_args: "['LD_LIBRARY_PATH=/usr/local/lib'] + {{ agent_cmd_args }}"
-    unconfigure_agent_cmd_args: "['LD_LIBRARY_PATH=/usr/local/lib'] + {{ unconfigure_agent_cmd_args }}"
+    override_env:
+      LD_LIBRARY_PATH: "/usr/local/lib"
   when: 
     - ansible_distribution in ['RedHat','CentOS'] and ansible_distribution_major_version == '6'
 
@@ -122,6 +122,7 @@
     removes: "{{ az_devops_agent_folder }}/.agent"
   become: true
   become_user: "{{ az_devops_agent_user }}"
+  environment: "{{ override_env }}"
   when:
     - service_is_installed
     - reconfigure_or_replace
@@ -141,6 +142,7 @@
     creates: "{{ az_devops_agent_folder }}/.agent"
   become: true
   become_user: "{{ az_devops_agent_user }}"
+  environment: "{{ override_env }}"
   when:
     - az_devops_agent_role == 'build'
     - (not service_is_installed) or reconfigure_or_replace
@@ -152,6 +154,7 @@
     creates: "{{ az_devops_agent_folder }}/.agent"
   become: true
   become_user: "{{ az_devops_agent_user }}"
+  environment: "{{ override_env }}"
   when:
     - az_devops_agent_role == 'deployment'
     - (not service_is_installed) or reconfigure_or_replace
@@ -163,6 +166,7 @@
     creates: "{{ az_devops_agent_folder }}/.agent"
   become: true
   become_user: "{{ az_devops_agent_user }}"
+  environment: "{{ override_env }}"
   when:
     - az_devops_agent_role == 'resource'
     - (not service_is_installed) or reconfigure_or_replace
